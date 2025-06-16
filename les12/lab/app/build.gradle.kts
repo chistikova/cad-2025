@@ -25,8 +25,6 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
-
-    // https://mvnrepository.com/artifact/org.springframework/spring-context
     implementation(libs.spring.context)
     implementation(libs.jakarta.annotation)
     implementation(libs.jakarta.persistence.api)
@@ -39,13 +37,17 @@ dependencies {
     implementation(libs.slf4j.api)
     implementation(libs.logback.core)
     implementation(libs.logback.classic)
+    implementation(libs.h2)
     implementation(libs.spring.data.jpa)
     implementation("org.springframework:spring-jdbc:6.2.2")
-        implementation("org.springframework:spring-webmvc:6.2.2")
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    implementation(libs.h2)
+    implementation("org.springframework:spring-webmvc:6.2.4")
     implementation("org.springframework:spring-web:6.2.4")
     providedCompile("jakarta.servlet:jakarta.servlet-api:6.1.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.15.2")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.15.2")
+	implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
+	implementation("org.thymeleaf:thymeleaf-spring6:3.1.2.RELEASE")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
