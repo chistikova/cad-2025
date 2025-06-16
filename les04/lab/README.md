@@ -23,104 +23,75 @@
 
 ``` mermaid 
 classDiagram
-    %% Interfaces
+    %% Интерфейсы
     class Reader {
         <<interface>>
-        +read() String
+        +read(): String
     }
 
     class Parser {
         <<interface>>
-        +parse(String text) List~Product~
-    }
-
-    class Renderer {
-        <<interface>>
-        +render()
+        +parse(String): List~Product~
     }
 
     class ProductProvider {
         <<interface>>
-        +getProducts() List~Product~
+        +getProducts(): List~Product~
     }
 
-    %% Implementation Classes
+    class Renderer {
+        <<interface>>
+        +render(): void
+    }
+
+    %% Сущность
     class Product {
-        +productId: int
-        +name: String
-        +description: String
-        +categoryId: int
-        +price: BigDecimal
-        +stockQuantity: int
-        +imageUrl: String
-        +createdAt: Calendar
-        +updatedAt: Calendar
+        +long productId
+        +String name
+        +String description
+        +int categoryId
+        +BigDecimal price
+        +int stockQuantity
+        +String imageUrl
+        +Date createdAt
+        +Date updatedAt
     }
 
-    class ConcreteProductProvider {
-        -reader: Reader
-        -parser: Parser
-        +getProducts() List~Product~
-    }
-
-    class HTMLTableRenderer {
-        -provider: ProductProvider
-        -DATE_FORMAT: SimpleDateFormat
-        +render()
-        -buildHtmlContent(List~Product~): String
-        -buildTable(List~Product~): String
-        -formatPrice(BigDecimal): String
-        -escapeHtml(String): String
+    %% Реализации
+    class ResourceFileReader {
+        +read(): String
     }
 
     class CSVParser {
-        +parse(String text) List~Product~
-        -stringToCalendar(String): Calendar
-        -stringToDecimal(String): BigDecimal
-        -stringToInteger(String): Integer
+        +parse(String): List~Product~
     }
 
-    class ResourceFileReader {
-        -path: String
-        +read(): String
-        +init()
+    class ConcreteProductProvider {
+        -Reader reader
+        -Parser parser
+        +getProducts(): List~Product~
     }
 
-    class PropertyProvider {
-        -filename: String
-        +getFileName(): String
+    class ConsoleTableRenderer {
+        -ProductProvider provider
+        +render(): void
     }
 
-    class TimeAround {
-        +invoke(MethodInvocation): Object
-    }
+    %% Отношения
+    Reader <|.. ResourceFileReader
+    Parser <|.. CSVParser
+    ProductProvider <|.. ConcreteProductProvider
+    Renderer <|.. ConsoleTableRenderer
 
-    class TimeAroundPointCut {
-        +matches(Method, Class~?~): boolean
-    }
-
-    class Config {
-        +parser(): Parser
-    }
-
-    %% Relationships
-    Reader <|.. ResourceFileReader : implements
-    Parser <|.. CSVParser : implements
-    Renderer <|.. HTMLTableRenderer : implements
-    ProductProvider <|.. ConcreteProductProvider : implements
-
-    ConcreteProductProvider --> Reader : depends on
-    ConcreteProductProvider --> Parser : depends on
+    ConcreteProductProvider --> ResourceFileReader : uses
+    ConcreteProductProvider --> CSVParser : uses
     ConcreteProductProvider --> Product : returns
 
-    ResourceFileReader --> PropertyProvider : depends on
-    HTMLTableRenderer --> ProductProvider : depends on
+    ConsoleTableRenderer --> ConcreteProductProvider : depends on
+    ConsoleTableRenderer --> Product : displays
 
-    CSVParser --> Product : creates
+    CSVParser --> Product : parses
 
-    Config ..> CSVParser : creates
-    Config ..> TimeAround : uses
-    Config ..> TimeAroundPointCut : uses
     ```
 
 ## Выводы

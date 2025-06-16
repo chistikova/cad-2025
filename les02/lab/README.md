@@ -31,30 +31,20 @@ CSV-файл должен располагаться в директории src
 Оформите отчет о выполнении лабораторной работы в виде файла README.md в директории les02/lab.
 
  ``` mermaid 
+
 classDiagram
-    %% Интерфейсы
-    class Reader {
-        <<interface>>
-        +read(): String
-    }
+    note "Товары для зоомагазина"
+    Reader <|.. ResourceFileReader
+    Parser <|.. CSVParser
+    ProductProvider <|.. ConcreteProductProvider
+    ConcreteProductProvider o-- Parser
+    ConcreteProductProvider o-- Reader
+    Renderer <|.. ConsoleTableRenderer
+    ConsoleTableRenderer o-- ProductProvider
+    ProductProvider .. Product
+    Parser .. Product
 
-    class Parser {
-        <<interface>>
-        +parse(String): List~Product~
-    }
-
-    class ProductProvider {
-        <<interface>>
-        +getProducts(): List~Product~
-    }
-
-    class Renderer {
-        <<interface>>
-        +render(): void
-    }
-
-    %% Сущность
-    class Product {
+    class  Product {
         +long productId
         +String name
         +String description
@@ -66,41 +56,45 @@ classDiagram
         +Date updatedAt
     }
 
-    %% Реализации
-    class ResourceFileReader {
-        +read(): String
+    class  Reader{
+        + String read()
     }
+    <<interface>> Reader
+
+    class ResourceFileReader {
+        + String read()
+    }
+
+    class  Parser{
+        + List[Product] parse(String)
+    }
+    <<interface>> Parser
 
     class CSVParser {
-        +parse(String): List~Product~
+        + List[Product] parse(String)
     }
 
-    class ConcreteProductProvider {
-        -Reader reader
-        -Parser parser
-        +getProducts(): List~Product~
+    class  Renderer{
+        +void render()
     }
+    <<interface>> Renderer
 
     class ConsoleTableRenderer {
-        -ProductProvider provider
-        +render(): void
+        - ProductProvider provider
+        +void render()
     }
 
-    %% Отношения
-    Reader <|.. ResourceFileReader
-    Parser <|.. CSVParser
-    ProductProvider <|.. ConcreteProductProvider
-    Renderer <|.. ConsoleTableRenderer
 
-    ConcreteProductProvider --> ResourceFileReader : uses
-    ConcreteProductProvider --> CSVParser : uses
-    ConcreteProductProvider --> Product : returns
+    class ProductProvider {
+        + List[Product] getProducts()
+    }
+    <<interface>> ProductProvider
 
-    ConsoleTableRenderer --> ConcreteProductProvider : depends on
-    ConsoleTableRenderer --> Product : displays
-
-    CSVParser --> Product : parses
-
+    class ConcreteProductProvider{
+        - Reader reader
+        - Parser parser
+       + List[Product] getProducts()
+    }
     ```
 
 
